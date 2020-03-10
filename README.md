@@ -65,7 +65,7 @@ Start Redis server by entering the following command on terminal
 redis-server
 ```
 
-And finally run the producer.py, consumer.py and then myapi.py
+And finally run the bitstream_producer.py, bitstream_consumer.py and then bitstream_api.py
 `
 
 python3 bitstream_producer.py <topic>  -- Creates a websocket connection to the bitcoin transaction api and streams it to kafka
