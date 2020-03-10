@@ -1,21 +1,23 @@
 # Bitcoin Transaction Streaming App
 
 A streaming application for realtime bitcoin transactions using Kafka, Redis and Flask<br><br>
-It receives the stream of bitcoin transaction data from this [API](https://www.blockchain.com/api/api_websocket). Transaction log is streamed to kafka where it's analyzed in realtime.
-Transactions are consumed from a kafka consumer and only transactions made in the last 3 hours are stored in Redis for analysis.
-A REST API shows the details related to transcations.
+It receives the stream of bitcoin transaction data from this [API](https://www.blockchain.com/api/api_websocket). 
 
+
+Transaction Logs are fetched from the above link and produced/streamed to kafka producer to a topic
+
+The Kafka Consumer consumes the data from the topic and it is analyzed in real time, and only transactions made in the last 3 hours are stored in Redis for analysis. A REST API shows the details related to transcations.
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
+Install these prerequisites by following the links
 
-* [Python 3.6](https://www.python.org/downloads/)
-* [Redis](https://redis.io/topics/quickstart)
-* [Kafka](https://kafka.apache.org/quickstart)
-* Python3-pip   ```sudo apt-get install python3-pip```
+* [Python 3.6+](https://www.python.org/downloads/)  - python 
+* [Redis](https://redis.io/topics/quickstart)  - redis server
+* [Kafka](https://kafka.apache.org/quickstart)  -kafka server along with zookeeper
 
 
 
@@ -24,6 +26,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 * Clone the repo and navigate into repo's directory
 * Fire up your terminal and enter this command:
+
+*  Note:Make sure you have installed pip3 in your machine 
 ```
 pip3 install -r requirements.txt
 ```
@@ -36,8 +40,13 @@ If installation finishes successfully, you are good to go.
 Fire up your terminals
 
 Start zookeeper and then kafka server
-```
+
+Note:Make sure you have the latest jdk installed in your machine
+
+
 bin/zookeeper-server-start.sh config/zookeeper.properties
+
+
 bin/kafka-server-start.sh config/server.properties
 ```
 
@@ -57,10 +66,15 @@ redis-server
 ```
 
 And finally run the producer.py, consumer.py and then myapi.py
-```
-python3 producer.py
-python3 consumer.py
-python3 myapi.py
+`
+
+python3 bitstream_producer.py <topic>  -- Creates a websocket connection to the bitcoin transaction api and streams it to kafka
+python3 bitstream_consumer.py <topic>  -- Consumes the transaction from the producer and analyzes and stores in redis
+
+
+python3 bitstream_producer.py test 
+python3 bitstream_consumer.py test
+python3 bitstream_api.py  -- Flask RESTful framework for showing the analyzed data
 ```
 
 
@@ -75,8 +89,16 @@ Displays latest 100 transactions in JSON format
 ```
 http://127.0.0.1:5000/transactions_count_per_minute/{minute_value}
 ```
-Display number of transactions per minute for the given minute_value.
-If {minute_value} is not mentioned, number of transactions per minute for the last hour will be displayed.
+
+Example:
+
+  http://127.0.0.1:5000/transactions_count_per_minute/05:48
+
+   Display number of transactions per minute for the given minute_value.
+
+  http://127.0.0.1:5000/transactions_count_per_minute
+
+   If {minute_value} is not mentioned, number of transactions per minute for the last hour will be displayed.
 
 ```
 http://127.0.0.1:5000/high_value_addr
